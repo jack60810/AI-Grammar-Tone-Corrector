@@ -5,15 +5,12 @@ A powerful PopClip extension that provides AI-powered grammar correction and ton
 ## ✨ Features
 
 - **🤖 Dual AI Providers**: Support for both OpenAI ChatGPT and Google Gemini
-- **📝 Four Processing Options**: 
-  - Fix Grammar: Correct grammar, spelling, and punctuation
-  - Make Formal: Rewrite in professional tone
-  - Make Friendly: Rewrite in conversational tone
-  - Custom: Use your custom prompt
+- **✨ Single Click Correction**: Instantly fix grammar and improve tone with a single "Fix Grammar" action
+- **🧠 "English Guru" Persona**: Uses a sophisticated system prompt to ensure authentic, clear, and natural English
 - **🔄 Smart Fallback**: Automatically switches between providers if one is unavailable
 - **⌨️ Shift Key Support**: Hold Shift to copy result instead of pasting
-- **⚙️ Customizable**: Configure custom prompts for each action
-- **🎯 Multiple Models**: Choose from different AI models for each provider
+- **⚙️ Customizable**: Configure the system prompt to match your specific needs
+- **🎯 Multiple Models**: Support for the latest AI models including Gemini 3.0 Pro and GPT-4o
 
 ## 🚀 Quick Start
 
@@ -44,7 +41,7 @@ A powerful PopClip extension that provides AI-powered grammar correction and ton
 
 4. **Use the Extension**
    - Select any text in any macOS application
-   - Choose from four options in PopClip menu
+   - Click **Fix Grammar** in the PopClip menu
    - Hold **Shift (⇧)** while clicking to copy the result instead of pasting
 
 ## 🔑 API Key Setup
@@ -68,13 +65,10 @@ A powerful PopClip extension that provides AI-powered grammar correction and ton
 
 ### Model Selection
 - **OpenAI Models**: gpt-4o-mini, gpt-4o, gpt-4-turbo, gpt-3.5-turbo
-- **Gemini Models**: gemini-2.5-pro, gemini-2.5-flash, gemini-1.5-pro, gemini-1.5-flash
+- **Gemini Models**: gemini-3-pro-preview, gemini-2.5-pro, gemini-2.5-flash
 
 ### Custom Prompts
-- **Fix Grammar Prompt**: Customize the prompt for grammar correction
-- **Make Formal Prompt**: Customize the prompt for formal tone
-- **Make Friendly Prompt**: Customize the prompt for friendly tone
-- **Custom Prompt**: Define your own prompt for the Custom action
+- **System Prompt**: Customize the system prompt to define the AI's persona and instructions. Leave empty to use the default "English Guru" prompt.
 
 ## 🔄 Smart Provider Selection
 
