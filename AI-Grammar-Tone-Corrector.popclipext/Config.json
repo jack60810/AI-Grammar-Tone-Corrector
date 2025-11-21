@@ -13,7 +13,9 @@
   "entitlements": [
     "network"
   ],
-  "requirements": ["text"],
+  "requirements": [
+    "text"
+  ],
   "options": [
     {
       "identifier": "openai_apikey",
@@ -31,9 +33,12 @@
       "identifier": "default_provider",
       "label": "Default AI Provider",
       "type": "multiple",
-      "defaultValue": "OpenAI",
+      "defaultValue": "Gemini",
       "description": "Choose the default AI provider",
-      "values": ["OpenAI", "Gemini"]
+      "values": [
+        "OpenAI",
+        "Gemini"
+      ]
     },
     {
       "identifier": "openai_model",
@@ -41,43 +46,31 @@
       "type": "multiple",
       "defaultValue": "gpt-4o-mini",
       "description": "OpenAI model to use",
-      "values": ["gpt-4o-mini", "gpt-4o", "gpt-4-turbo", "gpt-3.5-turbo"]
+      "values": [
+        "gpt-4o-mini",
+        "gpt-4o",
+        "gpt-4-turbo",
+        "gpt-3.5-turbo"
+      ]
     },
     {
       "identifier": "gemini_model",
       "label": "Gemini Model",
       "type": "multiple",
-      "defaultValue": "gemini-2.5-pro",
+      "defaultValue": "gemini-3-pro-preview",
       "description": "Gemini model to use",
-      "values": ["gemini-2.5-pro", "gemini-2.5-flash", "gemini-1.5-pro", "gemini-1.5-flash"]
+      "values": [
+        "gemini-3-pro-preview",
+        "gemini-2.5-pro",
+        "gemini-2.5-flash"
+      ]
     },
     {
-      "identifier": "fix_grammar_prompt",
-      "label": "Fix Grammar Prompt",
+      "identifier": "system_prompt",
+      "label": "System Prompt",
       "type": "string",
-      "defaultValue": "You are now a grammar and style corrector. Your only task is to revise the following text by fixing grammar, punctuation, and phrasing errors while preserving the original meaning and tone. Do not add explanations, translations, notes, or additional output. Output only the corrected version in the same language as the input.",
-      "description": "Custom prompt for Fix Grammar action"
-    },
-    {
-      "identifier": "make_formal_prompt",
-      "label": "Make Formal Prompt",
-      "type": "string",
-      "defaultValue": "You are now a professional writing assistant. Your only task is to rewrite the following text in a formal, professional tone. Correct any grammar issues and make it sound more formal and business-appropriate. Do not add explanations, translations, notes, or additional output. Output only the rewritten version in the same language as the input.",
-      "description": "Custom prompt for Make Formal action"
-    },
-    {
-      "identifier": "make_friendly_prompt",
-      "label": "Make Friendly Prompt",
-      "type": "string",
-      "defaultValue": "You are now a friendly writing assistant. Your only task is to rewrite the following text in a friendly, conversational tone. Correct any grammar issues and make it sound more approachable and warm. Do not add explanations, translations, notes, or additional output. Output only the rewritten version in the same language as the input.",
-      "description": "Custom prompt for Make Friendly action"
-    },
-    {
-      "identifier": "custom_prompt",
-      "label": "Custom Prompt",
-      "type": "string",
-      "defaultValue": "You are a helpful writing assistant. Please improve the following text according to your best judgment. Make it clear, engaging, and well-written. Return only the improved text without explanations.",
-      "description": "Custom prompt for the Custom action"
+      "defaultValue": "",
+      "description": "System prompt. Leave empty to use the default 'English Guru' prompt."
     }
   ]
 }

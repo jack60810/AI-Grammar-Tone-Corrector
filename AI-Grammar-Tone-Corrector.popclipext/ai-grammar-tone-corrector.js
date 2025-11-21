@@ -14,7 +14,7 @@ const processWithOpenAI = async (input, options, prompt) => {
     const baseURL = "https://api.openai.com/v1";
     const openai = axios_1.default.create({
       baseURL,
-      headers: { 
+      headers: {
         Authorization: `Bearer ${options.openai_apikey}`,
         'Content-Type': 'application/json'
       },
@@ -27,7 +27,7 @@ const processWithOpenAI = async (input, options, prompt) => {
     const requestBody = {
       model: model,
       messages: [
-        { role: "system", content: prompt }, 
+        { role: "system", content: prompt },
         { role: "user", content: input.text }
       ],
       max_tokens: 20000,
@@ -54,11 +54,11 @@ const processWithOpenAI = async (input, options, prompt) => {
  */
 const processWithGemini = async (input, options, prompt) => {
   try {
-    const model = options.gemini_model || "gemini-2.5-pro";
+    const model = options.gemini_model || "gemini-3-pro-preview";
     const apiKey = options.gemini_apikey;
-    
+
     const gemini = axios_1.default.create({
-      headers: { 
+      headers: {
         'Content-Type': 'application/json'
       },
       timeout: 30000 // 30 second timeout
@@ -78,38 +78,38 @@ const processWithGemini = async (input, options, prompt) => {
 
     // Use the most stable Gemini API endpoint
     const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
-    
+
     console.log(`Trying Gemini API endpoint: https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=***`);
     console.log(`Request body:`, JSON.stringify(requestBody, null, 2));
-    
+
     const response = await gemini.post(endpoint, requestBody);
     const data = response.data;
-    
+
     console.log(`Gemini API Response:`, JSON.stringify(data, null, 2));
 
     // Check for valid response structure
     if (!data) {
       throw new Error("Empty response from Gemini API");
     }
-    
+
     if (!data.candidates || data.candidates.length === 0) {
       throw new Error("No candidates in Gemini API response");
     }
-    
+
     const candidate = data.candidates[0];
     if (!candidate) {
       throw new Error("Invalid candidate in Gemini API response");
     }
-    
+
     // Check for finish reason
     if (candidate.finishReason && candidate.finishReason !== 'STOP') {
       throw new Error(`Gemini API finished with reason: ${candidate.finishReason}`);
     }
-    
+
     if (!candidate.content || !candidate.content.parts || candidate.content.parts.length === 0) {
       throw new Error("No content parts in Gemini API response");
     }
-    
+
     const text = candidate.content.parts[0].text;
     if (!text || typeof text !== 'string') {
       throw new Error("No valid text in Gemini API response");
@@ -122,6 +122,8 @@ const processWithGemini = async (input, options, prompt) => {
   }
 };
 
+const DEFAULT_PROMPT = "Your role is to be an English guru, an expert in authentic American English, who assists users in expressing their thoughts clearly and fluently. There is only one possible response, and it should match the format of the original text. You are not just translating words; you are delving into the essence of the user's message and reconstructing it in a way that maintains logical clarity and coherence. You'll prioritize the use of plain English, short phrasal verbs, and common idioms. It's important to craft sentences with varied lengths to create a natural rhythm and flow, making the language sound smooth and engaging. Avoid regional expressions or idioms that are too unique or restricted to specific areas. Your goal is to make American English accessible and appealing to a broad audience, helping users communicate effectively in a style that resonates with a wide range of English speakers. Avoid using hyphens when possible.";
+
 /**
  * Get prompt for action
  * @param {string} actionName - Name of the action
@@ -129,18 +131,10 @@ const processWithGemini = async (input, options, prompt) => {
  * @returns {string} The prompt to use
  */
 const getPromptForAction = (actionName, options) => {
-  switch (actionName) {
-    case 'Fix Grammar':
-      return options.fix_grammar_prompt || `You are now a grammar and style corrector. Your only task is to revise the following text by fixing grammar, punctuation, and phrasing errors while preserving the original meaning and tone. Do not add explanations, translations, notes, or additional output. Output only the corrected version in the same language as the input.`;
-    case 'Make Formal':
-      return options.make_formal_prompt || `You are now a professional writing assistant. Your only task is to rewrite the following text in a formal, professional tone. Correct any grammar issues and make it sound more formal and business-appropriate. Do not add explanations, translations, notes, or additional output. Output only the rewritten version in the same language as the input.`;
-    case 'Make Friendly':
-      return options.make_friendly_prompt || `You are now a friendly writing assistant. Your only task is to rewrite the following text in a friendly, conversational tone. Correct any grammar issues and make it sound more approachable and warm. Do not add explanations, translations, notes, or additional output. Output only the rewritten version in the same language as the input.`;
-    case 'Custom':
-      return options.custom_prompt || `You are a helpful writing assistant. Please improve the following text according to your best judgment. Make it clear, engaging, and well-written. Return only the improved text without explanations.`;
-    default:
-      return options.fix_grammar_prompt || `You are now a grammar and style corrector. Your only task is to revise the following text by fixing grammar, punctuation, and phrasing errors while preserving the original meaning and tone. Do not add explanations, translations, notes, or additional output. Output only the corrected version in the same language as the input.`;
+  if (options.system_prompt && options.system_prompt.trim().length > 0) {
+    return options.system_prompt;
   }
+  return DEFAULT_PROMPT;
 };
 
 /**
@@ -162,9 +156,9 @@ const processText = async (input, options) => {
     const prompt = getPromptForAction(actionName, options);
 
     // Determine which provider to use
-    const defaultProvider = options.default_provider || 'OpenAI';
+    const defaultProvider = options.default_provider || 'Gemini';
     let useProvider = defaultProvider;
-    
+
     // Check API keys and fallback logic
     if (useProvider === 'OpenAI' && !options.openai_apikey) {
       if (options.gemini_apikey) {
@@ -191,16 +185,16 @@ const processText = async (input, options) => {
     } else {
       response = await processWithGemini(input, options, prompt);
     }
-    
+
     console.log("API Response received:", response);
     console.log("Response length:", response?.length);
-    
+
     // Validate response before processing
     if (!response || typeof response !== 'string' || response.trim().length === 0) {
       popclip.showText("Empty response from AI", { preview: false });
       return null;
     }
-    
+
     // If holding shift, copy the response. Otherwise, paste it.
     if (popclip.modifiers.shift) {
       console.log("Copying response to clipboard");
@@ -216,11 +210,11 @@ const processText = async (input, options) => {
         popclip.showText("Paste failed - response copied to clipboard instead", { preview: false });
       }
     }
-    
+
     return null;
   } catch (error) {
     console.error("AI processing error:", error);
-    
+
     let errorMessage = "AI processing failed";
     if (error.message.includes("401")) {
       errorMessage = "Invalid API key";
@@ -233,7 +227,7 @@ const processText = async (input, options) => {
     } else if (error.message) {
       errorMessage = error.message;
     }
-    
+
     popclip.showText(errorMessage, { preview: false });
     return null;
   }
@@ -243,18 +237,6 @@ const processText = async (input, options) => {
 exports.actions = [
   {
     title: "Fix Grammar",
-    code: processText,
-  },
-  {
-    title: "Make Formal",
-    code: processText,
-  },
-  {
-    title: "Make Friendly", 
-    code: processText,
-  },
-  {
-    title: "Custom",
     code: processText,
   }
 ];
